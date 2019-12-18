@@ -1,3 +1,5 @@
+dist: trusty
+
 language: php
 
 php:
@@ -5,9 +7,10 @@ php:
   - 5.5
   - 5.6
   - 7.0
-  - hhvm
+  - 7.1
+  - 7.2
+  - 7.3
 
-# faster builds on new travis setup not using sudo
 sudo: false
 
 # cache vendor dirs
@@ -17,19 +20,13 @@ cache:
 
 install:
   - travis_retry composer self-update && composer --version
-  - travis_retry composer global require "fxp/composer-asset-plugin:~1.1.1"
   - export PATH="$HOME/.composer/vendor/bin:$PATH"
   - travis_retry composer install --prefer-dist --no-interaction
   # install php extensions
-  - |
-    if (php --version | grep -i HipHop > /dev/null); then
-      echo "Skipping imagick and gmagick tests on HHVM"
-    else
-      pear config-set preferred_state beta
-      printf "\n" | pecl install imagick
-      # gmagick is not installed on travis currently
-      #printf "\n" | pecl install gmagick
-    fi
+  - pear config-set preferred_state beta
+  - printf "\n" | pecl install imagick
+  # gmagick is not installed on travis currently
+  #printf "\n" | pecl install gmagick
 
 before_script:
   - |
@@ -38,7 +35,7 @@ before_script:
     fi
 
 script:
-  - phpunit --verbose $PHPUNIT_FLAGS
+  - vendor/bin/phpunit $PHPUNIT_FLAGS
 
 after_script:
   - |

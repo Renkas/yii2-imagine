@@ -45,16 +45,16 @@ class BaseImage
     const DRIVER_GMAGICK = 'gmagick';
 
     /**
-     * @var array|string the driver to use. This can be either a single driver name or an array of driver names.
-     * If the latter, the first available driver will be used.
-     */
-    public static $driver = [self::DRIVER_GMAGICK, self::DRIVER_IMAGICK, self::DRIVER_GD2];
-    /**
      * @var ImagineInterface instance.
      */
     private static $_imagine;
 
 
+    /**
+     * @var array|string the driver to use. This can be either a single driver name or an array of driver names.
+     * If the latter, the first available driver will be used.
+     */
+    public static $driver = [self::DRIVER_GMAGICK, self::DRIVER_IMAGICK, self::DRIVER_GD2];
     /**
      * @var string background color to use when creating thumbnails in `ImageInterface::THUMBNAIL_INSET` mode with
      * both width and height specified. Default is white.
@@ -150,14 +150,14 @@ class BaseImage
     /**
      * Crops an image.
      *
-     * For example,
+     * For example:
      *
-     * ~~~
+     * ```php
      * $obj->crop('path\to\image.jpg', 200, 200, [5, 5]);
      *
      * $point = new \Imagine\Image\Point(5, 5);
      * $obj->crop('path\to\image.jpg', 200, 200, $point);
-     * ~~~
+     * ```
      *
      * @param string|resource|ImageInterface $image either ImageInterface, resource or a string containing file path
      * @param int $width the crop width
@@ -187,7 +187,7 @@ class BaseImage
      */
     public static function autorotate($image, $color = '000000')
     {
-    	return (new Autorotate($color))->apply(static::ensureImageInterfaceInstance($image));
+        return (new Autorotate($color))->apply(static::ensureImageInterfaceInstance($image));
     }
 
     /**
@@ -255,10 +255,10 @@ class BaseImage
         $startX = 0;
         $startY = 0;
         if ($size->getWidth() < $width) {
-            $startX = ceil($width - $size->getWidth()) / 2;
+            $startX = ceil(($width - $size->getWidth()) / 2);
         }
         if ($size->getHeight() < $height) {
-            $startY = ceil($height - $size->getHeight()) / 2;
+            $startY = ceil(($height - $size->getHeight()) / 2);
         }
 
         $thumb->paste($img, new Point($startX, $startY));
@@ -367,7 +367,7 @@ class BaseImage
      */
     public static function frame($image, $margin = 20, $color = '666', $alpha = 100)
     {
-        $img = static::getImagine()->open(Yii::getAlias($image));
+        $img = self::ensureImageInterfaceInstance($image);
 
         $size = $img->getSize();
 
@@ -404,7 +404,6 @@ class BaseImage
 
         return self::getBox($sourceBox, $width, $height, false);
     }
-
 
     /**
      * Returns box for an image to be created.
@@ -459,7 +458,7 @@ class BaseImage
      * @param BoxInterface $destinationBox
      * @return bool
      */
-    protected  static function isUpscaling(BoxInterface $sourceBox, BoxInterface $destinationBox)
+    protected static function isUpscaling(BoxInterface $sourceBox, BoxInterface $destinationBox)
     {
         return ($sourceBox->getWidth() <= $destinationBox->getWidth() && $sourceBox->getHeight() <= $destinationBox->getHeight()) || (!$destinationBox->getWidth() && !$destinationBox->getHeight());
     }
